@@ -1,0 +1,117 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="it.weather.simpleweather.WeatherActivity$PlaceholderFragment">
+
+    <Button
+        android:id="@+id/btn_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/find"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="goFind_click" />
+
+    <EditText
+        android:id="@+id/et_place"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint"
+        android:inputType="text"
+        android:layout_toLeftOf="@id/btn_show" />
+
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignRight="@+id/btn_show"
+        android:layout_alignEnd="@+id/btn_show"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btn_show"
+        android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/hello_world"
+        android:id="@+id/tv_distance_time"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="87dp"
+        android:layout_alignParentBottom="true"
+        android:background="#80444444"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="true"
+        android:minHeight="@dimen/abc_button_padding_vertical_material"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/linearLayout2"
+        android:layout_alignBottom="@+id/map">
+
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="87dp"
+            android:id="@+id/btnvelocita"
+            android:layout_weight="1"
+            android:background="#80444444"
+            android:src="@drawable/limitevelocita" />
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="87dp"
+            android:id="@+id/btnconsigliata"
+            android:background="#80444444"
+            android:layout_weight="1"
+            android:src="@drawable/velocita" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="87dp"
+            android:id="@+id/btn3"
+            android:background="#80444444"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:onClick="goWeather_Click"
+            android:textSize="60sp"
+             />
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/rg_modes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignTop="@+id/map">
+
+        <RadioButton android:id="@+id/rb_driving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_rb_driving"
+            android:checked="true" />
+
+        <RadioButton android:id="@+id/rb_bicycling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_rb_bicycling" />
+
+        <RadioButton android:id="@+id/rb_walking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_rb_walking" />
+
+    </RadioGroup>
+
+</RelativeLayout>
