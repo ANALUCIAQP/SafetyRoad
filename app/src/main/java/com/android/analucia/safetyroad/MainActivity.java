@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity {
     private WeatherInfoRecovery infoWeather;
     Button mBtnFind;
     EditText etPlace;
-    private  TextView btnmeteo;
+    private  TextView btnmeteo ;
 
 
     @Override
