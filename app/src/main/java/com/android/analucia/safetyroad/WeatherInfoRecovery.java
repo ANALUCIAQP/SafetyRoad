@@ -145,7 +145,7 @@ public class WeatherInfoRecovery {
     public int  iconStatusWeather()
     {
 
-        return statusIcon;
+        return this.statusIcon;
     }
 
 
@@ -161,6 +161,7 @@ public class WeatherInfoRecovery {
 
     public TextView getUpdatedField()
     {
+
         return updatedField;
     }
 

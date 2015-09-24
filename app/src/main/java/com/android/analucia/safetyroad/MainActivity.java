@@ -1,6 +1,5 @@
 package com.android.analucia.safetyroad;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,18 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -32,16 +27,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -101,11 +89,10 @@ public class MainActivity extends FragmentActivity {
     private void runWeather_btn(double lat, double lnt)
     {
 
-
         String latitudine = Double.toString(lat); // returns latitude
         String longitudine = Double.toString(lnt); // returns longitude
 
-        Toast.makeText(this, "Your Location is - \nLat: " + latitudine + "\nLong: " + longitudine, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Your Location is - \nLat: " + latitudine + "\nLong: " + longitudine, Toast.LENGTH_LONG).show();
 
         infoWeather.changeLocation(latitudine, longitudine);
 
@@ -232,9 +219,8 @@ public class MainActivity extends FragmentActivity {
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
 
-        return url;
+        return "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
     }
 
     /** A method to download json data from url */
@@ -270,7 +256,7 @@ public class MainActivity extends FragmentActivity {
             br.close();
 
         }catch(Exception e){
-            Log.d("Exception while downloading url", e.toString());
+            Log.d("Exception download url", e.toString());
         }finally{
             assert iStream != null;
             iStream.close();
