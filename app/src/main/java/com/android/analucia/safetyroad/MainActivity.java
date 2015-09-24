@@ -54,15 +54,6 @@ public class MainActivity extends FragmentActivity {
 
     GoogleMap map;
     private WeatherInfoRecovery infoWeather;
-    RadioButton rbDriving;
-    RadioButton rbBiCycling;
-    RadioButton rbWalking;
-    RadioGroup rgModes;
-    TextView tvDistanceDuration;
-    int mMode=0;
-    final int MODE_DRIVING=0;
-    final int MODE_BICYCLING=1;
-    final int MODE_WALKING=2;
     Button mBtnFind;
     EditText etPlace;
     private  TextView btnmeteo;
@@ -91,16 +82,11 @@ public class MainActivity extends FragmentActivity {
         // Enable MyLocation Button in the Map
         map.setMyLocationEnabled(true);
 
-        tvDistanceDuration = (TextView) findViewById(R.id.tv_distance_time);
-
         btnmeteo = (TextView) findViewById(R.id.btn3);
         Typeface weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
         btnmeteo.setTypeface(weatherFont);
 
         infoWeather = new WeatherInfoRecovery(this);
-       // Log.d("danilo",map.getMyLocation().toString());
-       // runWeather_btn(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude());
-
         btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
         btnmeteo.setTextColor(Color.CYAN);
 
@@ -171,22 +157,6 @@ public class MainActivity extends FragmentActivity {
 
     public void goFind_click(View view) throws IOException {
 
-        // Getting reference to rb_driving
-        rbDriving = (RadioButton) findViewById(R.id.rb_driving);
-
-        // Getting reference to rb_bicylcing
-        rbBiCycling = (RadioButton) findViewById(R.id.rb_bicycling);
-
-        // Getting reference to rb_walking
-        rbWalking = (RadioButton) findViewById(R.id.rb_walking);
-
-        // Getting Reference to rg_modes
-        rgModes = (RadioGroup) findViewById(R.id.rg_modes);
-
-        rgModes.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 // Getting the place entered
                 final String locationd = etPlace.getText().toString();
@@ -213,12 +183,6 @@ public class MainActivity extends FragmentActivity {
 
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
-
-
-            }
-        });
-
-        Log.d("Info origin", map.getMyLocation().toString());
 
 
     }
@@ -261,30 +225,16 @@ public class MainActivity extends FragmentActivity {
         // Sensor enabled
         String sensor = "sensor=false";
 
-        // Travelling Mode
-        String mode = "mode=driving";
-
-        if(rbDriving.isChecked()){
-            mode = "mode=driving";
-            mMode = 0 ;
-        }else if(rbBiCycling.isChecked()){
-            mode = "mode=bicycling";
-            mMode = 1;
-        }else if(rbWalking.isChecked()){
-            mode = "mode=walking";
-            mMode = 2;
-        }
-
-        // Building the parameters to the web servi
-        String parameters = str_origin+"&"+str_dest+"&"+sensor+"&"+mode;
+        // Building the parameters to the web service
+        String parameters = str_origin+"&"+str_dest+"&"+sensor;
 
         // Output format
         String output = "json";
 
         // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
 
-
-        return  "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+        return url;
     }
 
     /** A method to download json data from url */
@@ -308,7 +258,7 @@ public class MainActivity extends FragmentActivity {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
 
             String line = "";
             while( ( line = br.readLine()) != null){
@@ -320,7 +270,7 @@ public class MainActivity extends FragmentActivity {
             br.close();
 
         }catch(Exception e){
-            Log.d("problem downloading url", e.toString());
+            Log.d("Exception while downloading url", e.toString());
         }finally{
             assert iStream != null;
             iStream.close();
@@ -343,7 +293,7 @@ public class MainActivity extends FragmentActivity {
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
             }catch(Exception e){
-                Log.d("Background Task",e.toString());
+                Log.d("Background Task", e.toString());
             }
             return data;
         }
@@ -360,6 +310,7 @@ public class MainActivity extends FragmentActivity {
             parserTask.execute(result);
         }
     }
+
 
     /** A class to parse the Google Places in JSON format */
 
@@ -390,18 +341,10 @@ public class MainActivity extends FragmentActivity {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-            String duration = "";
-
-
-            if(result.size()<1){
-                Toast.makeText(getBaseContext(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             // Traversing through all the routes
             for(int i=0;i<result.size();i++){
-                points = new ArrayList<>();
+                points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
 
                 // Fetching i-th route
@@ -410,14 +353,6 @@ public class MainActivity extends FragmentActivity {
                 // Fetching all the points in i-th route
                 for(int j=0;j<path.size();j++){
                     HashMap<String,String> point = path.get(j);
-
-                    if(j==0){    // Get distance from the list
-                        distance = (String)point.get("distance");
-                        continue;
-                    }else if(j==1){ // Get duration from the list
-                        duration = (String)point.get("duration");
-                        continue;
-                    }
 
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
@@ -429,22 +364,8 @@ public class MainActivity extends FragmentActivity {
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(2);
-
-                // Changing the color polyline according to the mode
-                if(mMode==MODE_DRIVING)
-                    lineOptions.color(Color.RED);
-                else if(mMode==MODE_BICYCLING)
-                    lineOptions.color(Color.GREEN);
-                else if(mMode==MODE_WALKING)
-                    lineOptions.color(Color.BLUE);
+                lineOptions.color(Color.RED);
             }
-
-            if(result.size()<1){
-                Toast.makeText(getBaseContext(), "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            tvDistanceDuration.setText("Distance:"+distance + ", Duration:"+duration);
 
             // Drawing polyline in the Google Map for the i-th route
             map.addPolyline(lineOptions);
