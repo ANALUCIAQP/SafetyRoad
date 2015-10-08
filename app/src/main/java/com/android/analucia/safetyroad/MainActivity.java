@@ -29,6 +29,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -70,6 +72,8 @@ public class MainActivity extends FragmentActivity {
         // Enable MyLocation Button in the Map
         map.setMyLocationEnabled(true);
 
+
+        /*
         btnmeteo = (TextView) findViewById(R.id.btn3);
         Typeface weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
         btnmeteo.setTypeface(weatherFont);
@@ -77,7 +81,7 @@ public class MainActivity extends FragmentActivity {
         infoWeather = new WeatherInfoRecovery(this);
         btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
         btnmeteo.setTextColor(Color.CYAN);
-
+*/
     }
 
 
