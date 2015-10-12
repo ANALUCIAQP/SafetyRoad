@@ -23,4 +23,10 @@
     <string name="weather_drizzle">&#xf01c;</string>
 
     <string name="place_not_found">Sorry, no weather data found.</string>
+    <string name="search_txt">SEARCH</string>
+    <string name="text_for_search">enter the street name you want to search or you want to reach</string>
+    <string name="text_for_choise">Select the transport system</string>
+    <string name="route_calculation">Calculate the route</string>
+
+
 </resources>

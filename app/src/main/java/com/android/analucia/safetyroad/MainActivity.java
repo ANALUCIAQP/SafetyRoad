@@ -73,7 +73,7 @@ public class MainActivity extends FragmentActivity {
         map.setMyLocationEnabled(true);
 
 
-        /*
+
         btnmeteo = (TextView) findViewById(R.id.btn3);
         Typeface weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
         btnmeteo.setTypeface(weatherFont);
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity {
         infoWeather = new WeatherInfoRecovery(this);
         btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
         btnmeteo.setTextColor(Color.CYAN);
-*/
+
     }
 
 
