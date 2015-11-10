@@ -157,7 +157,8 @@ public class MainActivity extends FragmentActivity {
                .position(currentPosition)
                .snippet("Lat: " + location.getLatitude() + ", Lng: " + location.getLongitude())
                .flat(true)
-               .title("I'm here!"));
+               .title("I'm here!")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car_marker)));
 
         // Zoom in, animating the camera.
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 18));
@@ -260,11 +261,11 @@ public class MainActivity extends FragmentActivity {
 
         map.addMarker(new MarkerOptions()
                 .position(origin)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.green_flag_marker)));
 
         map.addMarker(new MarkerOptions()
                 .position(dest)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_flag_marker)));
 
 
     }
