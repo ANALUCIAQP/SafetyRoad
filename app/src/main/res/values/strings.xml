@@ -3,10 +3,7 @@
     <string name="title_activity_main">SafetyRoad</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world"> </string>
-    <string name="str_tv_distance_time">Distance</string>
-    <string name="str_rb_driving">Driving</string>
-    <string name="str_rb_bicycling">BiCycling</string>
-    <string name="str_rb_walking">Walking</string>
+
     <string name="find">Find</string>
     <string name="hint">Enter Place</string>
 
@@ -23,10 +20,10 @@
     <string name="weather_drizzle">&#xf01c;</string>
 
     <string name="place_not_found">Sorry, no weather data found.</string>
-    <string name="search_txt">SEARCH</string>
-    <string name="text_for_search">enter the street name you want to search or you want to reach</string>
+    <string name="route_calculation_txt">ROUTE CALCULATION</string>
+    <string name="text_for_search">Enter the street name you want to search or you want to reach</string>
     <string name="text_for_choise">Select the transport system</string>
-    <string name="route_calculation">Calculate the route</string>
+    <string name="route_calculation_btn">Calculate the route</string>
 
 
 </resources>

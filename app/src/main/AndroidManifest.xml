@@ -8,7 +8,6 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.android.analucia.safetyroad.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
@@ -45,6 +44,12 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".route.RouteCalculation"
+            android:theme="@style/AppTheme.CustomTheme">
+        </activity>
+
     </application>
 
 </manifest>

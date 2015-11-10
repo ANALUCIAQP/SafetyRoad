@@ -3,24 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.weather.simpleweather.WeatherActivity$PlaceholderFragment">
-
-    <Button
-        android:id="@+id/btn_show"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/find"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:onClick="goFind_click" />
-
-    <EditText
-        android:id="@+id/et_place"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint"
-        android:inputType="text"
-        android:layout_toLeftOf="@id/btn_show" />
+    tools:context=".MainActivity">
 
 
     <fragment
@@ -28,11 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_alignRight="@+id/btn_show"
-        android:layout_alignEnd="@+id/btn_show"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/btn_show"
         android:layout_alignParentBottom="true" />
 
 
@@ -69,17 +49,30 @@
             android:src="@drawable/velocita" />
 
         <TextView
+            android:id="@+id/btn3"
             android:layout_width="0dp"
             android:layout_height="87dp"
-            android:id="@+id/btn3"
             android:background="#80444444"
             android:layout_weight="1"
             android:clickable="true"
             android:onClick="goWeather_Click"
             android:textSize="60sp"
+            android:layout_gravity="center"
              />
 
     </LinearLayout>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/btn_show"
+        android:src="@drawable/ic_setting_light"
+        android:background="#f0bbbcbd"
+        android:onClick="goSearchRoute_Click"
+        android:layout_gravity="right"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

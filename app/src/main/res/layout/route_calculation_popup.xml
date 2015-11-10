@@ -5,19 +5,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d821b5bf"
-    tools:context=".RouteCalculation">
+    android:background="#282a2a"
+    tools:context=".RouteCalculation"
+    android:theme="@style/Theme.AppCompat.Light.Dialog.Alert">
 
     <TextView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/search_txt"
+        android:text="@string/route_calculation_txt"
         android:id="@+id/search_txt"
-        android:background="#065f72"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:background="#58b4aa"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,16 +26,27 @@
         android:id="@+id/w1_txt"
         android:layout_marginTop="32dp"
         android:layout_below="@+id/search_txt"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:textColor="#faf6f6" />
 
-    <EditText
+    <!--
+    <com.android.analucia.safetyroad.route.CustomAutoCompleteTextView
+        android:id="@+id/search_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_edittext"
         android:layout_below="@+id/w1_txt"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:hint="@string/hint"
+        android:textColor="#000000"
+        android:singleLine="true" />
+        -->
+
+    <EditText
+       android:id="@+id/search_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/w1_txt"
+        android:hint="@string/hint"
+        android:textColor="#000000"
+        android:singleLine="true" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -50,11 +60,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/route_calculation"
+        android:text="@string/route_calculation_btn"
         android:id="@+id/route_btn"
-        android:layout_marginBottom="43dp"
+        android:layout_marginBottom="42dp"
+        android:onClick="goRoute_Click"
+        android:background="#58b4aa"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="goRoute_Click" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

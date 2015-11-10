@@ -1,77 +1,60 @@
 package com.android.analucia.safetyroad;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
-import android.os.AsyncTask;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.android.analucia.safetyroad.route.RouteCalculation;
+import com.android.analucia.safetyroad.tasks.DownloadTask;
+import com.android.analucia.safetyroad.weather.WeatherInfoRecovery;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-
 
 public class MainActivity extends FragmentActivity {
 
 
     GoogleMap map;
     private WeatherInfoRecovery infoWeather;
-    Button mBtnFind;
-    EditText etPlace;
+    ImageButton mBtn_search_route;
     private  TextView btnmeteo ;
+    private Location location;
+    private Marker marker;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        setUpMapIfNeeded();
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Getting reference to the find button
-        mBtnFind = (Button) findViewById(R.id.btn_show);
-
-        // Getting reference to EditText
-        etPlace = (EditText) findViewById(R.id.et_place);
-
-        // Getting reference to SupportMapFragment of the activity_main
-        SupportMapFragment fm = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
-
-        // Getting Map for the SupportMapFragment
-        map = fm.getMap();
-
-        // Enable MyLocation Button in the Map
-        map.setMyLocationEnabled(true);
-
+        mBtn_search_route = (ImageButton) findViewById(R.id.btn_show);
 
 
         btnmeteo = (TextView) findViewById(R.id.btn3);
@@ -83,6 +66,103 @@ public class MainActivity extends FragmentActivity {
         btnmeteo.setTextColor(Color.CYAN);
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpMapIfNeeded();
+    }
+
+    /**
+     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
+     * installed) and the map has not already been instantiated.. This will ensure that we only ever
+     * call {@link #setUpMap()} once when {@link #map} is not null.
+     * <p/>
+     * If it isn't installed {@link SupportMapFragment} (and
+     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
+     * install/update the Google Play services APK on their device.
+     * <p/>
+     * A user can return to this FragmentActivity after following the prompt and correctly
+     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
+     * have been completely destroyed during this process (it is likely that it would only be
+     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
+     * method in {@link #onResume()} to guarantee that it will be called.
+     */
+    private void setUpMapIfNeeded() {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (map == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            // Check if we were successful in obtaining the map.
+            if (map != null) {
+                setUpMap();
+            }
+        }
+    }
+
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #map} is not null.
+     */
+    private void setUpMap() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+        String provider = locationManager.getBestProvider(criteria, true);
+
+        LocationListener locationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location location) {
+                showCurrentLocation(location);
+            }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
+            @Override
+            public void onProviderEnabled(String s) {
+            }
+            @Override
+            public void onProviderDisabled(String s) {
+            }
+        };
+
+        locationManager.requestLocationUpdates(provider, 2000, 0, locationListener);
+
+        // Getting initial Location
+        location = locationManager.getLastKnownLocation(provider);
+
+
+        // Show the initial location
+        if(location != null)
+        {
+            showCurrentLocation(location);
+        }
+    }
+
+    private void showCurrentLocation(Location location){
+
+        if(marker !=null) {
+            marker.remove();
+        }
+
+        LatLng currentPosition = new LatLng(location.getLatitude(),location.getLongitude());
+
+       marker = map.addMarker(new MarkerOptions()
+               .position(currentPosition)
+               .snippet("Lat: " + location.getLatitude() + ", Lng: " + location.getLongitude())
+               .flat(true)
+               .title("I'm here!"));
+
+        // Zoom in, animating the camera.
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 18));
+    }
+
 
 
 
@@ -108,9 +188,8 @@ public class MainActivity extends FragmentActivity {
 
     public void goWeather_Click(View view)throws IOException {
 
-        showPopUp2(MainActivity.this.map.getMyLocation().getLatitude(), MainActivity.this.map.getMyLocation().getLongitude());
-        // Intent intent = new Intent(this, MainActivity.class);
-        //startActivity(intent);
+        showPopUp2(location.getLatitude(), location.getLongitude());
+
     }
 
 
@@ -146,37 +225,34 @@ public class MainActivity extends FragmentActivity {
 
 
 
-    public void goFind_click(View view) throws IOException {
+    public void routeDesign(String destinazione) {
 
+        if (destinazione.equals("")) {
+            Toast.makeText(getBaseContext(), "No Place is entered", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                // Getting the place entered
-                final String locationd = etPlace.getText().toString();
+        // Checks, whether start and end locations are captured
+        LatLng origin = new LatLng(this.location.getLatitude(),this.location.getLongitude());
+        LatLng dest = null;
+        try {
+            dest = from_Address_to_coordinates(destinazione);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                if (locationd.equals("")) {
-                    Toast.makeText(getBaseContext(), "No Place is entered", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        drawStartStopMarkers(origin, dest);
+        // Getting URL to the Google Directions API
+        String url = getDirectionsUrl(origin, dest);
 
-                // Checks, whether start and end locations are captured
-                LatLng origin = new LatLng(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude());
-                LatLng dest = null;
-                try {
-                    dest = from_Address_to_coordinates(locationd);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        DownloadTask downloadTask = new DownloadTask(map);
 
-                drawStartStopMarkers(origin, dest);
-                // Getting URL to the Google Directions API
-                String url = getDirectionsUrl(origin, dest);
-
-                DownloadTask downloadTask = new DownloadTask();
-
-                // Start downloading json data from Google Directions API
-                downloadTask.execute(url);
-
-
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
     }
+
+
+
 
     private void drawStartStopMarkers(LatLng origin, LatLng dest){
 
@@ -217,7 +293,7 @@ public class MainActivity extends FragmentActivity {
         String sensor = "sensor=false";
 
         // Building the parameters to the web service
-        String parameters = str_origin+"&"+str_dest+"&"+sensor;
+        String parameters = str_origin+"&"+str_dest +"&"+sensor;
 
         // Output format
         String output = "json";
@@ -227,146 +303,39 @@ public class MainActivity extends FragmentActivity {
         return "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
     }
 
-    /** A method to download json data from url */
 
-
-    private String downloadUrl(String strUrl) throws IOException{
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try{
-            URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
-            urlConnection.connect();
-
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while( ( line = br.readLine()) != null){
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        }catch(Exception e){
-            Log.d("Exception download url", e.toString());
-        }finally{
-            assert iStream != null;
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
-
-    // Fetches data from url passed
-    private class DownloadTask extends AsyncTask<String, Void, String>{
-
-        // Downloading data in non-ui thread
-        @Override
-        protected String doInBackground(String... url) {
-
-            // For storing data from web service
-            String data = "";
-
-            try{
-                // Fetching the data from web service
-                data = downloadUrl(url[0]);
-            }catch(Exception e){
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-
-        // Executes in UI thread, after the execution of
-        // doInBackground()
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            ParserTask parserTask = new ParserTask();
-
-            // Invokes the thread for parsing the JSON data
-            parserTask.execute(result);
-        }
-    }
-
-
-    /** A class to parse the Google Places in JSON format */
-
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
-
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try{
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-
-                // Starts parsing data
-                routes = parser.parse(jObject);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        // Executes in UI thread, after the parsing process
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
-            PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-
-            // Traversing through all the routes
-            for(int i=0;i<result.size();i++){
-                points = new ArrayList<LatLng>();
-                lineOptions = new PolylineOptions();
-
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
-
-                // Fetching all the points in i-th route
-                for(int j=0;j<path.size();j++){
-                    HashMap<String,String> point = path.get(j);
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-
-                    points.add(position);
-                }
-
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(2);
-                lineOptions.color(Color.RED);
-            }
-
-            // Drawing polyline in the Google Map for the i-th route
-            map.addPolyline(lineOptions);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+
+    public void goSearchRoute_Click(View view)throws IOException {
+
+        // Creating an intent to open the activity MapActivity
+        Intent intent = new Intent(this , RouteCalculation.class);
+
+        // Opening the activity
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                //here is your result
+                String result = data.getStringExtra("result");
+
+                //draw the route
+
+                routeDesign(result);
+
+            }
+        }
     }
 
 
