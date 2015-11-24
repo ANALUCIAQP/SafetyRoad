@@ -16,11 +16,7 @@ import java.io.IOException;
 
 public class RouteCalculation extends Activity {
 
-
-    //AutoCompleteTextView atvPlaces;
     EditText atvPlaces;
-    DownloadTaskRoute placesDownloadTask;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

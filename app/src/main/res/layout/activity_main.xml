@@ -20,58 +20,60 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="0dp"
-        android:layout_height="87dp"
+        android:layout_height="97dp"
         android:layout_alignParentBottom="true"
         android:background="#80444444"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentStart="true"
-        android:minHeight="@dimen/abc_button_padding_vertical_material"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:id="@+id/linearLayout2"
-        android:layout_alignBottom="@+id/map">
+        android:layout_alignBottom="@+id/map"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
 
 
-        <ImageButton
+        <TextView
             android:layout_width="0dp"
-            android:layout_height="87dp"
-            android:id="@+id/btnvelocita"
+            android:layout_height="97dp"
+            android:id="@+id/txt_speed"
             android:layout_weight="1"
-            android:background="#80444444"
-            android:src="@drawable/limitevelocita" />
+            android:textSize="60sp"
+            android:background="@drawable/circle_speed_limit"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
 
-        <ImageButton
+        <TextView
             android:layout_width="0dp"
-            android:layout_height="87dp"
-            android:id="@+id/btnconsigliata"
-            android:background="#80444444"
+            android:layout_height="97dp"
+            android:id="@+id/txt_suggested_speed"
+            android:background="@drawable/dark_blue_circle"
             android:layout_weight="1"
-            android:src="@drawable/velocita" />
+            android:textSize="60sp"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
 
         <TextView
             android:id="@+id/btn3"
             android:layout_width="0dp"
-            android:layout_height="87dp"
-            android:background="#80444444"
+            android:layout_height="97dp"
+            android:background="#00000000"
             android:layout_weight="1"
             android:clickable="true"
             android:onClick="goWeather_Click"
-            android:textSize="60sp"
-            android:layout_gravity="center"
-             />
+            android:textSize="65sp"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
 
     </LinearLayout>
 
     <ImageButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:id="@+id/btn_show"
-        android:src="@drawable/ic_setting_light"
-        android:background="#f0bbbcbd"
+        android:src="@drawable/distance_64"
+        android:background="@drawable/grey_circle_64"
         android:onClick="goSearchRoute_Click"
-        android:layout_gravity="right"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
 

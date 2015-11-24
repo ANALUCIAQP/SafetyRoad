@@ -15,8 +15,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/route_calculation_txt"
         android:id="@+id/search_txt"
-        android:background="#58b4aa"
-        android:layout_alignParentTop="true" />
+        android:background="#a7baf3"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,18 +28,9 @@
         android:id="@+id/w1_txt"
         android:layout_marginTop="32dp"
         android:layout_below="@+id/search_txt"
-        android:textColor="#faf6f6" />
+        android:textColor="#faf6f6"
+        android:layout_marginLeft="5dp" />
 
-    <!--
-    <com.android.analucia.safetyroad.route.CustomAutoCompleteTextView
-        android:id="@+id/search_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/w1_txt"
-        android:hint="@string/hint"
-        android:textColor="#000000"
-        android:singleLine="true" />
-        -->
 
     <EditText
        android:id="@+id/search_edittext"
@@ -46,7 +39,9 @@
         android:layout_below="@+id/w1_txt"
         android:hint="@string/hint"
         android:textColor="#000000"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:background="#ffffff"
+        android:layout_margin="10dp" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -64,8 +59,9 @@
         android:id="@+id/route_btn"
         android:layout_marginBottom="42dp"
         android:onClick="goRoute_Click"
-        android:background="#58b4aa"
+        android:background="#a7baf3"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:padding="4dp" />
 
 </RelativeLayout>

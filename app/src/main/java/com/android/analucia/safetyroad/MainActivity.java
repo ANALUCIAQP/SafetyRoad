@@ -3,6 +3,7 @@ package com.android.analucia.safetyroad;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,13 +18,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.analucia.safetyroad.database.RoadDataDbHelper;
 import com.android.analucia.safetyroad.route.RouteCalculation;
+import com.android.analucia.safetyroad.tasks.DatabaseTask;
 import com.android.analucia.safetyroad.tasks.DownloadTask;
 import com.android.analucia.safetyroad.weather.WeatherInfoRecovery;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,13 +39,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends FragmentActivity {
 
 
     GoogleMap map;
     private WeatherInfoRecovery infoWeather;
     ImageButton mBtn_search_route;
-    private  TextView btnmeteo ;
+    private TextView btnmeteo;
     private Location location;
     private Marker marker;
 
@@ -49,21 +57,20 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpMapIfNeeded();
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Getting reference to the find button
         mBtn_search_route = (ImageButton) findViewById(R.id.btn_show);
-
-
         btnmeteo = (TextView) findViewById(R.id.btn3);
         Typeface weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
         btnmeteo.setTypeface(weatherFont);
 
         infoWeather = new WeatherInfoRecovery(this);
         btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
-        btnmeteo.setTextColor(Color.CYAN);
+        btnmeteo.setTextColor(Color.WHITE);
+
+        setUpMapIfNeeded();
 
     }
 
@@ -121,12 +128,15 @@ public class MainActivity extends FragmentActivity {
             public void onLocationChanged(Location location) {
                 showCurrentLocation(location);
             }
+
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
             }
+
             @Override
             public void onProviderEnabled(String s) {
             }
+
             @Override
             public void onProviderDisabled(String s) {
             }
@@ -139,29 +149,51 @@ public class MainActivity extends FragmentActivity {
 
 
         // Show the initial location
-        if(location != null)
-        {
+        if (location != null) {
             showCurrentLocation(location);
         }
     }
 
-    private void showCurrentLocation(Location location){
+    private void updateWeatherBtn(String latitude, String longitude) {
 
-        if(marker !=null) {
+        infoWeather.changeLocation(latitude, longitude);
+
+    }
+
+    private void showCurrentLocation(Location location) {
+
+        if (marker != null) {
             marker.remove();
         }
 
-        LatLng currentPosition = new LatLng(location.getLatitude(),location.getLongitude());
+        LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
-       marker = map.addMarker(new MarkerOptions()
-               .position(currentPosition)
-               .snippet("Lat: " + location.getLatitude() + ", Lng: " + location.getLongitude())
-               .flat(true)
-               .title("I'm here!")
+        marker = map.addMarker(new MarkerOptions()
+                .position(currentPosition)
+                .snippet("Lat: " + location.getLatitude() + ", Lng: " + location.getLongitude())
+                .flat(true)
+                .title("I'm here!")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.car_marker)));
 
         // Zoom in, animating the camera.
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 18));
+
+        DatabaseTask databaseTask = new DatabaseTask(this);
+
+        JSONObject json = infoWeather.getWeatherData(location.getLatitude() + "", location.getLongitude() + "");
+
+        try {
+            infoWeather.chooseWeatherIcon(json.getJSONArray("weather").getJSONObject(0).getInt("id"),
+                    json.getJSONObject("sys").getLong("sunrise") * 1000,
+                    json.getJSONObject("sys").getLong("sunset") * 1000);
+
+            databaseTask.execute(location.getLatitude() + "", location.getLongitude() + "",
+                    (json.getJSONArray("weather").getJSONObject(0).getInt("id") + ""));
+            btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -170,9 +202,7 @@ public class MainActivity extends FragmentActivity {
     /*                         METODI PER IL CALCOLO DEL METEO                        */
 
 
-
-    private void runWeather_btn(double lat, double lnt)
-    {
+    private void runWeather_btn(double lat, double lnt) {
 
         String latitudine = Double.toString(lat); // returns latitude
         String longitudine = Double.toString(lnt); // returns longitude
@@ -182,20 +212,20 @@ public class MainActivity extends FragmentActivity {
         infoWeather.changeLocation(latitudine, longitudine);
 
         btnmeteo.setText(this.getString(infoWeather.iconStatusWeather()));
+    }
+
+
+    public void goWeather_Click(View view) throws IOException {
+        if (location == null) {
+            Toast.makeText(this, "Location not available", Toast.LENGTH_LONG).show();
+        } else {
+            showPopUp2(location.getLatitude(), location.getLongitude());
+        }
 
     }
 
 
-
-    public void goWeather_Click(View view)throws IOException {
-
-        showPopUp2(location.getLatitude(), location.getLongitude());
-
-    }
-
-
-
-    private void showPopUp2( double lat, double lnt) {
+    private void showPopUp2(double lat, double lnt) {
 
 
         AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
@@ -224,8 +254,6 @@ public class MainActivity extends FragmentActivity {
     /*                        METODI PER CALCOLARE IL PERCORSO TRA DUE PUNTI                           */
 
 
-
-
     public void routeDesign(String destinazione) {
 
         if (destinazione.equals("")) {
@@ -234,7 +262,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Checks, whether start and end locations are captured
-        LatLng origin = new LatLng(this.location.getLatitude(),this.location.getLongitude());
+        LatLng origin = new LatLng(this.location.getLatitude(), this.location.getLongitude());
         LatLng dest = null;
         try {
             dest = from_Address_to_coordinates(destinazione);
@@ -253,9 +281,7 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-
-
-    private void drawStartStopMarkers(LatLng origin, LatLng dest){
+    private void drawStartStopMarkers(LatLng origin, LatLng dest) {
 
         map.clear();
 
@@ -282,28 +308,27 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    private String getDirectionsUrl(LatLng origin,LatLng dest){
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
         // Origin of route
-        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
 
         // Destination of route
-        String str_dest = "destination="+dest.latitude+","+dest.longitude;
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
 
         // Sensor enabled
         String sensor = "sensor=false";
 
         // Building the parameters to the web service
-        String parameters = str_origin+"&"+str_dest +"&"+sensor;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor;
 
         // Output format
         String output = "json";
 
         // Building the url to the web service
 
-        return "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+        return "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
     }
-
 
 
     @Override
@@ -314,10 +339,10 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    public void goSearchRoute_Click(View view)throws IOException {
+    public void goSearchRoute_Click(View view) throws IOException {
 
         // Creating an intent to open the activity MapActivity
-        Intent intent = new Intent(this , RouteCalculation.class);
+        Intent intent = new Intent(this, RouteCalculation.class);
 
         // Opening the activity
         startActivityForResult(intent, 1);
@@ -338,7 +363,6 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-
 
 
 }
