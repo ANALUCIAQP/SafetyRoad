@@ -96,7 +96,7 @@ public class DatabaseTask extends AsyncTask<String, Void, Integer[]> {
             List<DistanceAndSpeeds> results = new ArrayList<DistanceAndSpeeds>();
             while (!c.isAfterLast()) {
                 suggestedSpeed = c.getInt(
-                        c.getColumnIndexOrThrow(RoadDataContract.RoadEntry.COLUMN_NAME_A2)
+                        c.getColumnIndexOrThrow(speedColumnName)
                 );
 
                 speedLimit = c.getInt(
